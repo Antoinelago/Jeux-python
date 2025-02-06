@@ -1,0 +1,152 @@
+#!/usr/bin/python3
+# Créé par ANTOINE, le 15/12/2023 en Python 3.7
+import pygame
+import sys
+sys.path.append('./File')
+
+from constants import *
+from board import *
+from button import Button
+
+
+
+screen = pygame.display.set_mode((0, 0))#, pygame.FULLSCREEN)
+width = screen.get_width()
+height = screen.get_height()
+green = (144, 201, 120) #144,201,120
+
+pygame.init()
+
+
+IG = pygame.image.load("assets/Image gris.png")
+BG = pygame.image.load("assets/DD.jpg") #Image arriere plan
+
+scaled_image = pygame.transform.scale(BG, (width, height)) 
+scaled_image2 = pygame.transform.scale(IG, (width, height))
+centre = width / 2
+temps_debut = 0
+niveau_actuelle = 1 
+niveau_reco = 0
+def get_font(size): #Ecriture 
+    return pygame.font.Font("assets/font.ttf", size)
+
+
+def what_game(): #MENU
+    Run = True
+    while Run:
+        screen.blit(scaled_image2, (0, 0))
+
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+        MENU_TEXT = get_font(100).render("MENU", True, "#03BC00")
+        MENU_RECT = MENU_TEXT.get_rect(center=(centre, 90))
+
+        #Front = 75 
+        # BOUTON EN DESSOUS
+        JEUX_1 = Button(image=pygame.image.load("assets/113.png"), pos=(centre, 225), 
+                            text_input="JEUX 1", font=get_font(75), base_color="Cyan", hovering_color="Orange") #Jeux 1 sans bouger piston
+        JEUX_2 = Button(image=pygame.image.load("assets/113.png"), pos=(centre, 375),
+                            text_input="JEUX 2", font=get_font(75), base_color="Cyan", hovering_color="black") #jeux 2 bouger piston
+        JEUX_3 = Button(image=pygame.image.load("assets/113.png"), pos=(centre, 525), 
+                            text_input="JEUX 3", font=get_font(75), base_color="Cyan", hovering_color="White") #jeux 3
+        QUIT_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(centre, 675), 
+                            text_input="QUITTER", font=get_font(75), base_color="Cyan", hovering_color="red")
+
+        screen.blit(MENU_TEXT, MENU_RECT) 
+
+        for button in [JEUX_1, JEUX_2, JEUX_3, QUIT_BUTTON]:
+            button.changeColor(MENU_MOUSE_POS)
+            button.update(screen)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.KEYUP: #touche 
+                if (pygame.key.name(event.key) == 'q'): #Si q, quitter
+                    Run = False
+                    pygame.quit()
+                    sys.exit()
+            if event.type == pygame.QUIT:
+                Run = False
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                """
+                Si les coordonnées du clic coincide avec les coordonnées d'un bouton alors :
+                """
+                if JEUX_1.checkForInput(MENU_MOUSE_POS): #menu j1
+                    """
+                    Si c'est le bouton JOUER, le niveau = niveau_actuelle, ce qui permet de mettre le prochain niveau et non le niveau 1
+                     et load_map(niveau) permet de lancer la map selon un niveau 
+                    """
+                    main_menu_j1()
+                if JEUX_2.checkForInput(MENU_MOUSE_POS): #menu j2
+                    from jeux1_v2 import main_menu_j2
+                    main_menu_j2()
+
+                if JEUX_3.checkForInput(MENU_MOUSE_POS): #menu j3
+                    pass
+                
+                if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS): #QUITTER
+                    Run = False
+                    pygame.quit()
+                    sys.exit()
+        pygame.display.update()
+
+
+def main_menu_j1(): #MENU
+    while True:
+        screen.blit(scaled_image, (0, 0))
+
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+        MENU_TEXT = get_font(100).render("VARIANTS", True, "#03BC00")
+        MENU_RECT = MENU_TEXT.get_rect(center=(centre, 90))
+
+        #Front = 75 
+        # BOUTON EN DESSOUS
+        V1_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(centre, 225), 
+                            text_input="VARIANT 1", font=get_font(75), base_color="Cyan", hovering_color="Orange")
+        V2_BUTTON = Button(image=pygame.image.load("assets/113.png"), pos=(centre, 375),
+                            text_input="VARIANT 2", font=get_font(75), base_color="Cyan", hovering_color="black") #LEVEL
+        OTHER_GAME = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(centre, 800),
+                            text_input="CHANGER DE JEUX", font=get_font(75), base_color="Cyan", hovering_color="red")
+        QUIT_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(centre, 675), 
+                            text_input="QUITTER", font=get_font(75), base_color="Cyan", hovering_color="red")
+
+        screen.blit(MENU_TEXT, MENU_RECT) 
+
+        for button in [V1_BUTTON, V2_BUTTON, OTHER_GAME, QUIT_BUTTON]:
+            button.changeColor(MENU_MOUSE_POS)
+            button.update(screen)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:    
+                """
+                Si les coordonnées du clic coincide avec les coordonnées d'un bouton alors :
+                """
+                if V1_BUTTON.checkForInput(MENU_MOUSE_POS): #V1
+                    """
+                    Si c'est le bouton JOUER, le niveau = niveau_actuelle, ce qui permet de mettre le prochain niveau et non le niveau 1
+                     et load_map(niveau) permet de lancer la map selon un niveau 
+                    """
+                    from jeux1_v1 import main_menu_v1
+                    main_menu_v1()
+                if V2_BUTTON.checkForInput(MENU_MOUSE_POS): #V2 
+                    from jeux1_v2 import main_menu_v2
+                    main_menu_v2()
+
+                if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS): #QUITTER
+                    pygame.quit()
+                    sys.exit()
+                if OTHER_GAME.checkForInput(MENU_MOUSE_POS): #Menu principale
+                    from main import what_game
+                    what_game()
+        pygame.display.update()
+
+    
+print("main  ok")
+
+if __name__ == '__main__':
+    what_game()
