@@ -77,9 +77,7 @@ def what_game(): #MENU
                     Si c'est le bouton JOUER, le niveau = niveau_actuelle, ce qui permet de mettre le prochain niveau et non le niveau 1
                      et load_map(niveau) permet de lancer la map selon un niveau 
                     """
-                    #main_menu_j1() #Ici le menu est pour choisir la version
-                    from Jeux.Jeu1.jeu1 import main_menu_v1
-                    main_menu_v1()
+                    main_menu_j1()
                 if JEUX_2.checkForInput(MENU_MOUSE_POS): #menu j2
                     pass
 
@@ -132,10 +130,11 @@ def main_menu_j1(): #MENU
                     Si c'est le bouton JOUER, le niveau = niveau_actuelle, ce qui permet de mettre le prochain niveau et non le niveau 1
                      et load_map(niveau) permet de lancer la map selon un niveau 
                     """
-                    from Jeux.Jeu1.jeu1 import main_menu_v1
+                    from Jeux.Jeu1.V1.jeux1_v1 import main_menu_v1
                     main_menu_v1()
                 if V2_BUTTON.checkForInput(MENU_MOUSE_POS): #V2 
-                    pass
+                    from Jeux.Jeu1.V2.jeux1_v2 import main_menu_v2
+                    main_menu_v2()
 
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS): #QUITTER
                     pygame.quit()

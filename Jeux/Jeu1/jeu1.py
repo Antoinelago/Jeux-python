@@ -2,14 +2,15 @@
 import pygame
 import sys
 import time
-from constants import *
-from board import *
-from button import Button
+from .constants import *
+from .board import *
+from .button import Button
 
 
 width = screen.get_width() * 1
 height = screen.get_height() * 1
 green = (144, 201, 120) #144,201,120
+green = (0, 0, 0)
 
 # pygame.init()
 
@@ -387,7 +388,15 @@ def jeuxx():
     running = True
     #running = False
     temps_debut = 0
+    start_time = time.time() #FPS
+    x = 1 # displays the frame rate every 1 second #FPS
+    counter = 0 #FPS
     while running:
+        counter+=1 #FPS
+        if (time.time() - start_time) > x : #FPS
+            print("FPS: ", counter / (time.time() - start_time)) #FPS
+            counter = 0 #FPS
+            start_time = time.time() #FPS
         
         
 
@@ -407,8 +416,10 @@ def jeuxx():
                 x = pos[0] // tile_size
                 y = pos[1] // tile_size
 
-
-                tile_value = game_map[y][x]  # Obtenez la valeur de la tuile cliqué
+                try:
+                    tile_value = game_map[y][x]  # Obtenez la valeur de la tuile cliqué
+                except:
+                    break
                 
 
                 #INTERACTION
@@ -660,3 +671,5 @@ def reset():
 print("jeux1  ok")
 #main_menu() #Affiche le menu principale
 #main_menu_j1()
+
+# main_menu_v1() # a supprimeer
