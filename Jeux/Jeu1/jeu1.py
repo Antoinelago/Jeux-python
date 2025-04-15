@@ -26,6 +26,9 @@ temps_debut = 0
 niveau_actuelle = 1 
 niveau_reco = 0
 
+clock = pygame.time.Clock() #FPS
+FPS = 60  #FPS
+
 
 def get_font(size): #Ecriture 
     return pygame.font.Font("assets/RaveoVF.ttf", size)
@@ -44,7 +47,7 @@ def main_menu_v1(): #MENU
         PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(centre, 225), 
                             text_input="JOUER", font=get_font(75), base_color="Cyan", hovering_color="Orange")
         LEVEL_BUTTON = Button(image=pygame.image.load("assets/113.png"), pos=(centre, 375),
-                            text_input="LEVELS", font=get_font(75), base_color="Cyan", hovering_color="black") #LEVEL
+                            text_input="dev", font=get_font(75), base_color="Cyan", hovering_color="black") #LEVEL
         OPTIONS_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(centre, 525), 
                             text_input="OPTIONS", font=get_font(75), base_color="Cyan", hovering_color="White") #OPTIONS
         OTHER_GAME = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(centre, 675),
@@ -73,14 +76,15 @@ def main_menu_v1(): #MENU
                     """
                     global niveau 
                     niveau = niveau_actuelle
-                    load_map(niveau)
+                    # load_map(niveau)
+                    level()
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS): #OPTIONS
                     options()
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS): #QUITTER
                     pygame.quit()
                     sys.exit()
                 if LEVEL_BUTTON.checkForInput(MENU_MOUSE_POS): #LEVEL 
-                    level()
+                    pass
                 if OTHER_GAME.checkForInput(MENU_MOUSE_POS): #Menu principale
                     from main import what_game
                     what_game()
@@ -384,22 +388,12 @@ def pause():
         pygame.display.update()
 
 def jeuxx():
-    global temps_debut, temps_ecoule
+    global temps_debut, temps_ecoule, clock
     running = True
     #running = False
     temps_debut = 0
-    start_time = time.time() #FPS
-    x = 1 # displays the frame rate every 1 second #FPS
-    counter = 0 #FPS
-    while running:
-        counter+=1 #FPS
-        if (time.time() - start_time) > x : #FPS
-            print("FPS: ", counter / (time.time() - start_time)) #FPS
-            counter = 0 #FPS
-            start_time = time.time() #FPS
-        
-        
 
+    while running:
 
         for evenement in pygame.event.get():
 
@@ -409,6 +403,9 @@ def jeuxx():
             if evenement.type == pygame.KEYDOWN:
                 if evenement.key == pygame.K_SPACE:
                     pause() 
+                if evenement.key == pygame.K_q:
+                    pygame.quit()
+                    sys.exit()
             if evenement.type == pygame.MOUSEBUTTONDOWN:
                 if temps_debut == 0: #Permet d'initier le chronometre s'il ne l'etait pas 
                     temps_debut = time.time()
@@ -420,174 +417,21 @@ def jeuxx():
                     tile_value = game_map[y][x]  # Obtenez la valeur de la tuile cliqué
                 except:
                     break
-                
+                collision(x, y, game_map[y][x])
 
                 #INTERACTION
-                if tile_value == PH: #PH
-                    if game_map[y-1][x] == i and game_map[y-2][x] == z:
-                        game_map[y-1][x] = z
-                        game_map[y-2][x] = i
-                        game_map[y][x] = PHO
-                    if game_map[y-1][x] == z:
-                        game_map[y][x] = PHO
-                        game_map[y-1][x] = zz
-                if tile_value == PHO: #PHO
-                    if game_map[y-1][x] == zz:
-                        game_map[y-1][x] = z
-                    game_map[y][x] = PH
-
-                if tile_value == PD: #PD
-                    if game_map[y][x+1] == i and game_map[y][x+2] == z:
-                        game_map[y][x+1] = z
-                        game_map[y][x+2] = i
-                        game_map[y][x] = PDO
-                    if game_map[y][x+1] == z:
-                        game_map[y][x] = PDO
-                        game_map[y][x+1] = zz
-                if tile_value == PDO: #PDO
-                    if game_map[y][x+1] == zz:
-                        game_map[y][x+1] = z
-                    game_map[y][x] = PD
-
-                if tile_value == PB: #PB
-                    if game_map[y+1][x] == i and game_map[y+2][x] == z:
-                        game_map[y+1][x] = z
-                        game_map[y+2][x] = i
-                        game_map[y][x] = PBO
-                    if game_map[y+1][x] == z:
-                        game_map[y+1][x] = zz
-                        game_map[y][x] = PBO
-                if tile_value == PBO: #PBO
-                    if game_map[y+1][x] == zz:
-                        game_map[y+1][x] = z
-                    game_map[y][x] = PB
-
-                if tile_value == PG: #PG
-                    if game_map[y][x-1] == i and game_map[y][x-2] == z:
-                        game_map[y][x-1] = zz
-                        game_map[y][x-2] = i
-                        game_map[y][x] = PGO
-                    if game_map[y][x-1] == z:
-                        game_map[y][x] = PGO
-                        game_map[y][x-1] = zz
-                if tile_value == PGO: #PGO
-                    if game_map[y][x-1] == zz:
-                        game_map[y][x-1] = z
-                    game_map[y][x] = PG
-
-                if tile_value == PBC:
-                    if game_map[y+1][x] == i and game_map[y+2][x] == z:
-                        game_map[y+1][x] = z 
-                        game_map[y+2][x] = i 
-                        game_map[y][x] = PBOC
-                    if game_map[y+1][x] == z:
-                        game_map[y+1][x] = zz
-                        game_map[y][x] = PBOC
-                if tile_value == PBOC:
-                    if game_map[y+2][x] != i:
-                        game_map[y+1][x] = z
-                        game_map[y][x] = PBC
-                    if game_map[y+2][x] == i:
-                        game_map[y+1][x] = i
-                        game_map[y+2][x] = z 
-                        game_map[y][x] = PBC
-
-                if tile_value == PHC:
-                    if game_map[y-1][x] == i and game_map[y-2][x] == z:
-                        game_map[y-1][x] = z 
-                        game_map[y-2][x] = i 
-                        game_map[y][x] = PHOC
-                    if game_map[y-1][x] == z:
-                        game_map[y-1][x] = zz
-                        game_map[y][x] = PHOC
-                if tile_value == PHOC:
-                    if game_map[y-2][x] != i:
-                        game_map[y-1][x] = z
-                        game_map[y][x] = PHC
-                    if game_map[y-2][x] == i:
-                        game_map[y-1][x] = i
-                        game_map[y-2][x] = z 
-                        game_map[y][x] = PHC
-
-                if tile_value == PGC:
-                    if game_map[y][x-1] == i and game_map[y][x-2] == z:
-                        game_map[y][x-1] = zz
-                        game_map[y][x-2] = i
-                        game_map[y][x] = PGOC
-                    if game_map[y][x-1] == z:
-                        game_map[y][x-1] = zz
-                        game_map[y][x] = PGOC
-                if tile_value == PGOC: 
-                    if game_map[y][x-2] != i:
-                        game_map[y][x-1] = z
-                        game_map[y][x] = PGC
-                    if game_map[y][x-2] == i:
-                        game_map[y][x-1] = i
-                        game_map[y][x-2] = z 
-                        game_map[y][x] = PGC
-
-                if tile_value == PDC:
-                    if game_map[y][x+1] == i and game_map[y][x+2] == z:
-                        game_map[y][x+1] = zz
-                        game_map[y][x+2] = i
-                        game_map[y][x] = PDOC
-                    if game_map[y][x+1] == z:
-                        game_map[y][x+1] = zz
-                        game_map[y][x] = PDOC
-                if tile_value == PDOC: 
-                    if game_map[y][x+2] != i:
-                        game_map[y][x+1] = z
-                        game_map[y][x] = PDC
-                    if game_map[y][x+2] == i:
-                        game_map[y][x+1] = i
-                        game_map[y][x+2] = z 
-                        game_map[y][x] = PDC
-        #LE fait de le mettre dans la boucle while fait que ça calcule à chaque fois les x y du bloc de lumière
-        #Mettre dans a chaque boutton appuyé
-        #RESOLU
-                coordinates = []
-                for row in range(len(game_map)):
-                    for col in range(len(game_map[row])):
-                        if game_map[row][col] == j:
-                            coordinates.append((row, col))
-
-                for coord in coordinates:
-                    l, m = coord
-                #print(m,l)
-
-
-                    if game_map[l][m] == j:
-                        if game_map[l][m+1] == i:
-                            game_map[l][m] = k
-                            draw_map(game_map)
-                            pygame.display.flip()
-                            win()
-                        if game_map[l][m-1] == i:
-                            game_map[l][m] = k
-                            draw_map(game_map)
-                            pygame.display.flip()
-                            win()
-                        if game_map[l+1][m] == i:
-                            game_map[l][m] = k
-                            draw_map(game_map)
-                            pygame.display.flip()
-                            win()
-                        if game_map[l-1][m] == i:
-                            game_map[l][m] = k
-                            draw_map(game_map)
-                            pygame.display.flip()
-                            win()
-                    if game_map[l][m] == k:
-                        if game_map[l][m+1] == i or game_map[l][m-1]== i or game_map[l+1][m] == i or game_map[l-1][m] == i:
-                            game_map[l][m] = k
-                        else:
-                            game_map[l][m] = j
-                # x+1 = gauche
-                # x-1 = droite
-                # y+1 = haut
-                # y-1 = bas
-
-
+                # if tile_value == PH: #PH
+                #     if game_map[y-1][x] == i and game_map[y-2][x] == z:
+                #         game_map[y-1][x] = z
+                #         game_map[y-2][x] = i
+                #         game_map[y][x] = PHO
+                #     if game_map[y-1][x] == z:
+                #         game_map[y][x] = PHO
+                #         game_map[y-1][x] = zz
+                # if tile_value == PHO: #PHO
+                #     if game_map[y-1][x] == zz:
+                #         game_map[y-1][x] = z
+                #     game_map[y][x] = PH
 
         screen.fill(green)
 
@@ -595,7 +439,15 @@ def jeuxx():
         draw_map(game_map)
 
 
+        fps_actuel = int(clock.get_fps())
+        texte_fps = get_font(50).render(f"FPS: {fps_actuel}", True, (255, 255, 255))
+        position_fps = (screen.get_width() - texte_fps.get_width() - 10, 10)
+        screen.blit(texte_fps, position_fps)        
+        
+        # Mettre à jour l'affichage
         pygame.display.flip()
+
+        clock.tick(FPS) #Limite le nombre de FPS
 
 def load_map(niveau):
     global game_map, game_map1, game_map2, game_map3, game_map4, game_map5, game_map6, game_map7, game_map8
@@ -620,6 +472,172 @@ def load_map(niveau):
 
     draw_map(game_map)
     jeuxx()
+
+def collision(x, y, tile_value):
+    print("x: ", x, "y: ", y, "bloc: ", tile_value)
+    if tile_value == PH: #PH
+        if game_map[y-1][x] == i and game_map[y-2][x] == z:
+            game_map[y-1][x] = z
+            game_map[y-2][x] = i
+            game_map[y][x] = PHO
+        if game_map[y-1][x] == z:
+            game_map[y][x] = PHO
+            game_map[y-1][x] = zz
+    if tile_value == PHO: #PHO
+        if game_map[y-1][x] == zz:
+            game_map[y-1][x] = z
+            game_map[y][x] = PH
+    
+    if tile_value == PD: #PD
+        if game_map[y][x+1] == i and game_map[y][x+2] == z:
+            game_map[y][x+1] = z
+            game_map[y][x+2] = i
+            game_map[y][x] = PDO
+        if game_map[y][x+1] == z:
+            game_map[y][x] = PDO
+            game_map[y][x+1] = zz
+    if tile_value == PDO: #PDO
+        if game_map[y][x+1] == zz:
+            game_map[y][x+1] = z
+        game_map[y][x] = PD
+
+    if tile_value == PB: #PB
+        if game_map[y+1][x] == i and game_map[y+2][x] == z:
+            game_map[y+1][x] = z
+            game_map[y+2][x] = i
+            game_map[y][x] = PBO
+        if game_map[y+1][x] == z:
+            game_map[y+1][x] = zz
+            game_map[y][x] = PBO
+    if tile_value == PBO: #PBO
+        if game_map[y+1][x] == zz:
+            game_map[y+1][x] = z
+        game_map[y][x] = PB
+
+    if tile_value == PG: #PG
+        if game_map[y][x-1] == i and game_map[y][x-2] == z:
+            game_map[y][x-1] = zz
+            game_map[y][x-2] = i
+            game_map[y][x] = PGO
+        if game_map[y][x-1] == z:
+            game_map[y][x] = PGO
+            game_map[y][x-1] = zz
+    if tile_value == PGO: #PGO
+        if game_map[y][x-1] == zz:
+            game_map[y][x-1] = z
+        game_map[y][x] = PG
+
+    if tile_value == PBC:
+        if game_map[y+1][x] == i and game_map[y+2][x] == z:
+            game_map[y+1][x] = z 
+            game_map[y+2][x] = i 
+            game_map[y][x] = PBOC
+        if game_map[y+1][x] == z:
+            game_map[y+1][x] = zz
+            game_map[y][x] = PBOC
+    if tile_value == PBOC:
+        if game_map[y+2][x] != i:
+            game_map[y+1][x] = z
+            game_map[y][x] = PBC
+        if game_map[y+2][x] == i:
+            game_map[y+1][x] = i
+            game_map[y+2][x] = z 
+            game_map[y][x] = PBC
+
+    if tile_value == PHC:
+        if game_map[y-1][x] == i and game_map[y-2][x] == z:
+            game_map[y-1][x] = z 
+            game_map[y-2][x] = i 
+            game_map[y][x] = PHOC
+        if game_map[y-1][x] == z:
+            game_map[y-1][x] = zz
+            game_map[y][x] = PHOC
+    if tile_value == PHOC:
+        if game_map[y-2][x] != i:
+            game_map[y-1][x] = z
+            game_map[y][x] = PHC
+        if game_map[y-2][x] == i:
+            game_map[y-1][x] = i
+            game_map[y-2][x] = z 
+            game_map[y][x] = PHC
+
+    if tile_value == PGC:
+        if game_map[y][x-1] == i and game_map[y][x-2] == z:
+            game_map[y][x-1] = zz
+            game_map[y][x-2] = i
+            game_map[y][x] = PGOC
+        if game_map[y][x-1] == z:
+            game_map[y][x-1] = zz
+            game_map[y][x] = PGOC
+    if tile_value == PGOC: 
+        if game_map[y][x-2] != i:
+            game_map[y][x-1] = z
+            game_map[y][x] = PGC
+        if game_map[y][x-2] == i:
+            game_map[y][x-1] = i
+            game_map[y][x-2] = z 
+            game_map[y][x] = PGC
+
+    if tile_value == PDC:
+        if game_map[y][x+1] == i and game_map[y][x+2] == z:
+            game_map[y][x+1] = zz
+            game_map[y][x+2] = i
+            game_map[y][x] = PDOC
+        if game_map[y][x+1] == z:
+            game_map[y][x+1] = zz
+            game_map[y][x] = PDOC
+    if tile_value == PDOC: 
+        if game_map[y][x+2] != i:
+            game_map[y][x+1] = z
+            game_map[y][x] = PDC
+        if game_map[y][x+2] == i:
+            game_map[y][x+1] = i
+            game_map[y][x+2] = z 
+            game_map[y][x] = PDC
+        #LE fait de le mettre dans la boucle while fait que ça calcule à chaque fois les x y du bloc de lumière
+        #Mettre dans a chaque boutton appuyé
+        #RESOLU
+    coordinates = []
+    for row in range(len(game_map)):
+        for col in range(len(game_map[row])):
+            if game_map[row][col] == j:
+                coordinates.append((row, col))
+
+    for coord in coordinates:
+        l, m = coord
+    #print(m,l)
+
+
+        if game_map[l][m] == j:
+            if game_map[l][m+1] == i:
+                game_map[l][m] = k
+                draw_map(game_map)
+                pygame.display.flip()
+                win()
+            if game_map[l][m-1] == i:
+                game_map[l][m] = k
+                draw_map(game_map)
+                pygame.display.flip()
+                win()
+            if game_map[l+1][m] == i:
+                game_map[l][m] = k
+                draw_map(game_map)
+                pygame.display.flip()
+                win()
+            if game_map[l-1][m] == i:
+                game_map[l][m] = k
+                draw_map(game_map)
+                pygame.display.flip()
+                win()
+        if game_map[l][m] == k:
+            if game_map[l][m+1] == i or game_map[l][m-1]== i or game_map[l+1][m] == i or game_map[l-1][m] == i:
+                game_map[l][m] = k
+            else:
+                game_map[l][m] = j
+    # x+1 = gauche
+    # x-1 = droite
+    # y+1 = haut
+    # y-1 = bas
 
 def win():
     a = True 
